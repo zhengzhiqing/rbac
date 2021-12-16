@@ -19,7 +19,7 @@ jobs:
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: check master
         run: |
-          if git log master ^develop;
+          if git log origin/master ^develop;
           then
             echo "should merge master first"
           else
