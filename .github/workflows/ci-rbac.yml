@@ -17,3 +17,11 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
+      - name: check master
+        run: |
+          if git log master ^develop;
+          then
+            echo "should merge master first"
+          else
+            echo "master already merged"
+          fi
