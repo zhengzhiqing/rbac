@@ -53,5 +53,11 @@ tasks.whenTaskAdded { task ->
 }
 
 task checkMaster() {
-		return "git log master ^develop".execute().text.trim()
+	println "hello"
+	def masterSynced = masterSynced();
+	println masterSynced;
+}
+
+def static masterSynced() {
+	return 'git log master ^develop'.execute().text.trim();
 }
