@@ -45,3 +45,13 @@ dependencies {
 test {
 	useJUnitPlatform()
 }
+
+tasks.whenTaskAdded { task ->
+	if (task.name == 'build') {
+		task.dependsOn("checkMaster")
+	}
+}
+
+task checkMaster() {
+		return "git log master ^develop".execute().text.trim()
+}
