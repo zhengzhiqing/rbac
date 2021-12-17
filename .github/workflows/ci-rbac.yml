@@ -21,4 +21,4 @@ jobs:
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: check master
         run: |
-          git log origin/master ^develop;
+          git log develop ^origin/master;
