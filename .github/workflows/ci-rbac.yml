@@ -1,14 +1,11 @@
 name:
-  GitHub Actions Demo
+  rbac-ci-workflow
 on:
   workflow_dispatch:
 jobs:
-  Explore-GitHub-Actions:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       - name: Check out repository code
         uses: actions/checkout@v2
         with:
@@ -19,11 +16,16 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
-      - name: check master
-        run: |
-          if: git log origin/master ^develop == '';
-          then
-            echo "master already merged"
-          else
-            echo "should merge master first"
-          fi
+      - name: test-master-synced
+          run: |
+            echo "start of this step"
+            res=$(git log origin/master ^HEAD)
+            if [ -z "$res" ]; then
+              echo "Master already merged to current branch, continue..."
+            else
+              echo "JOB QUIT! Please merge master first"
+              exit 1
+            fi
+            echo "end of this step"
+      - name: finish
+        run: echo "finish"
