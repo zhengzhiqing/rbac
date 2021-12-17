@@ -21,7 +21,7 @@ jobs:
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: check master
         run: |
-          if git log origin/master ^develop == '';
+          if: git log origin/master ^develop == '';
           then
             echo "master already merged"
           else
