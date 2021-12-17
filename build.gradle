@@ -1,7 +1,7 @@
 plugins {
-	id 'org.springframework.boot' version '2.4.2'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
+    id 'org.springframework.boot' version '2.4.2'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
 }
 
 group = 'com.eric'
@@ -9,55 +9,67 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenLocal()
-	maven {
-		url 'https://maven.aliyun.com/nexus/content/groups/public/'
-	}
-	jcenter()
-	mavenCentral()
+    mavenLocal()
+    maven {
+        url 'https://maven.aliyun.com/nexus/content/groups/public/'
+    }
+    jcenter()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 //	implementation 'org.springframework.boot:spring-boot-starter-test'
 //	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 //		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 //	}
 
-	implementation 'mysql:mysql-connector-java'
+    implementation 'mysql:mysql-connector-java'
 
-	implementation 'com.baomidou:mybatis-plus-boot-starter:3.4.2'
-	implementation 'com.baomidou:mybatis-plus-generator:3.4.1'
+    implementation 'com.baomidou:mybatis-plus-boot-starter:3.4.2'
+    implementation 'com.baomidou:mybatis-plus-generator:3.4.1'
 //	implementation 'com.baomidou:mybatis-plus-generator:3.5.0-SNAPSHOT'
-	implementation 'org.freemarker:freemarker:2.3.30'
+    implementation 'org.freemarker:freemarker:2.3.30'
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
-tasks.whenTaskAdded { task ->
-	if (task.name == 'build') {
-		task.dependsOn("checkMaster")
-	}
+//tasks.whenTaskAdded { task ->
+//    if (task.name == 'clean') {
+//        task.dependsOn("checkMaster")
+//    }
+//}
+
+clean {
+    dependsOn 'checkMaster'
 }
 
 task checkMaster() {
-	println "hello"
-	def masterSynced = masterSynced();
-	println masterSynced;
+    doLast() {
+        println("check master start")
+        if (masterSynced()) {
+            throw new IllegalStateException("please merge origin/master first");
+        }
+    }
 }
 
 def static masterSynced() {
-	return 'git log master ^develop'.execute().text.trim();
+    def command = 'git log origin/master ^' + getGitBranch()
+    return command.execute().text.trim() == ''
+}
+
+def static getGitBranch() {
+    return 'git symbolic-ref --short -q HEAD'.execute().text.trim()
 }
